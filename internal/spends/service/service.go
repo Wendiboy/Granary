@@ -55,17 +55,14 @@ func (s *spendsService) CreateSpend(spend Spend) (Spend, error) {
 
 	id, _ := uuid.NewUUID()
 	rawSpend := RawSpend{
-		Id:         id,
-		Account:    spend.Account,
-		Category:   spend.Category,
-		Amount:     spend.Amount,
-		Currency:   spend.Currency,
-		Labels:     spend.Labels,
-		Note:       spend.Note,
-		Date:       spend.Date,
-		Created_at: "timestamp with timezone",
-		Updated_at: "timestamp with timezone",
-		Deleted_at: "timestamp with timezone",
+		Id:       id,
+		Account:  spend.Account,
+		Category: spend.Category,
+		Amount:   spend.Amount,
+		Currency: spend.Currency,
+		Labels:   spend.Labels,
+		Note:     spend.Note,
+		Date:     spend.Date,
 	}
 	log.Println("to DB:", rawSpend)
 
@@ -84,17 +81,14 @@ func (s *spendsService) UpdateSpend(id uuid.UUID, spend Spend) (Spend, error) {
 	log.SetPrefix("SRV Update:")
 
 	rawSpend := RawSpend{
-		Id:         id,
-		Account:    spend.Account,
-		Category:   spend.Category,
-		Amount:     spend.Amount,
-		Currency:   spend.Currency,
-		Labels:     spend.Labels,
-		Note:       spend.Note,
-		Date:       spend.Date,
-		Created_at: "timestamp with timezone",
-		Updated_at: "timestamp with timezone",
-		Deleted_at: "timestamp with timezone",
+		Id:       id,
+		Account:  spend.Account,
+		Category: spend.Category,
+		Amount:   spend.Amount,
+		Currency: spend.Currency,
+		Labels:   spend.Labels,
+		Note:     spend.Note,
+		Date:     spend.Date,
 	}
 	log.Println(rawSpend)
 

@@ -1,6 +1,10 @@
 package SpendsService
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Spend struct {
 	ID       uuid.UUID `json:"id"`
@@ -14,17 +18,17 @@ type Spend struct {
 }
 
 type RawSpend struct {
-	Id         uuid.UUID
-	Account    string
-	Category   string
-	Amount     float64
-	Currency   string
-	Labels     string
-	Note       string
-	Date       string
-	Created_at string
-	Updated_at string
-	Deleted_at string
+	Id        uuid.UUID
+	Account   string
+	Category  string
+	Amount    float64
+	Currency  string
+	Labels    string
+	Note      string
+	Date      string
+	CreatedAt time.Time  `gorm:"column:created_at"`
+	UpdatedAt time.Time  `gorm:"column:updated_at"`
+	DeletedAt *time.Time `gorm:"column:deleted_at"`
 }
 
 // сделать тип для каждого поля (строгая типизация) enum

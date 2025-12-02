@@ -1,21 +1,26 @@
 package main
 
 import (
+	db "finance/internal/db"
 	handlers "finance/internal/spends/handlers"
 	spendsService "finance/internal/spends/service"
+	"log"
 
 	"github.com/labstack/echo/v4"
 )
 
-// crud для spend
-// GIT init
-
 // подключить postgress
-// сделать htmx
+// Добавить мииграции
+
+// сделать HTMX
 
 func main() {
+	database, err := db.InitDB()
+	if err != nil {
+		log.Fatalf("Could not connect to DataBase: %v", err)
+	}
 
-	repository := spendsService.NewSpendsRepository()
+	repository := spendsService.NewSpendsRepository(database)
 	service := spendsService.NewSpendsService(repository)
 
 	Handlers := handlers.NewSpendsHandlers(service)

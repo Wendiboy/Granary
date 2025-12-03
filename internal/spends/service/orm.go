@@ -1,20 +1,21 @@
 package SpendsService
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type Spend struct {
-	ID       uuid.UUID `json:"id"`
-	Account  string    `json:"account"`
-	Category string    `json:"category"`
-	Amount   float64   `json:"amount"`
-	Currency string    `json:"currency"`
-	Labels   string    `json:"labels"`
-	Note     string    `json:"note"`
-	Date     string    `json:"date"`
+	ID       string `json:"id"`
+	Account  string `json:"account"`
+	Category string `json:"category"`
+	Amount   string `json:"amount"`
+	Currency string `json:"currency"`
+	Labels   string `json:"labels"`
+	Note     string `json:"note"`
+	Date     string `json:"date"`
 }
 
 type RawSpend struct {
@@ -34,14 +35,35 @@ type RawSpend struct {
 // сделать тип для каждого поля (строгая типизация) enum
 func MappingSpend(rawSpend RawSpend) Spend {
 	spend := Spend{
-		ID:       rawSpend.Id,
+		ID:       rawSpend.Id.String(),
 		Account:  rawSpend.Account,
 		Category: rawSpend.Category,
-		Amount:   rawSpend.Amount,
+		Amount:   strconv.FormatFloat(rawSpend.Amount, 'f', 2, 64),
 		Currency: rawSpend.Currency,
 		Labels:   rawSpend.Labels,
 		Note:     rawSpend.Note,
 		Date:     rawSpend.Date,
 	}
 	return spend
+}
+
+func ReMappingSpend(id uuid.UUID, spend Spend) (RawSpend, error) {
+	amount, err := strconv.ParseFloat(spend.Amount, 64)
+
+	if err != nil {
+		return RawSpend{}, err
+	}
+
+	rawSpend := RawSpend{
+		Id:       id,
+		Account:  spend.Account,
+		Category: spend.Category,
+		Amount:   amount,
+		Currency: spend.Currency,
+		Labels:   spend.Labels,
+		Note:     spend.Note,
+		Date:     spend.Date,
+	}
+
+	return rawSpend, nil
 }

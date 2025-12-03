@@ -52,21 +52,14 @@ func (s *spendsService) GetAllSpends() ([]Spend, error) {
 
 func (s *spendsService) CreateSpend(spend Spend) (Spend, error) {
 	log.SetPrefix("SRV, create:")
+	log.Println("reqSpend:", spend)
 
 	id, _ := uuid.NewUUID()
-	rawSpend := RawSpend{
-		Id:       id,
-		Account:  spend.Account,
-		Category: spend.Category,
-		Amount:   spend.Amount,
-		Currency: spend.Currency,
-		Labels:   spend.Labels,
-		Note:     spend.Note,
-		Date:     spend.Date,
-	}
+
+	rawSpend, err := ReMappingSpend(id, spend)
 	log.Println("to DB:", rawSpend)
 
-	rawSpend, err := s.repo.CreateSpend(rawSpend)
+	rawSpend, err = s.repo.CreateSpend(rawSpend)
 
 	if err != nil {
 		return Spend{}, err
@@ -80,19 +73,10 @@ func (s *spendsService) CreateSpend(spend Spend) (Spend, error) {
 func (s *spendsService) UpdateSpend(id uuid.UUID, spend Spend) (Spend, error) {
 	log.SetPrefix("SRV Update:")
 
-	rawSpend := RawSpend{
-		Id:       id,
-		Account:  spend.Account,
-		Category: spend.Category,
-		Amount:   spend.Amount,
-		Currency: spend.Currency,
-		Labels:   spend.Labels,
-		Note:     spend.Note,
-		Date:     spend.Date,
-	}
+	rawSpend, err := ReMappingSpend(id, spend)
 	log.Println(rawSpend)
 
-	rawSpend, err := s.repo.UpdateSpend(rawSpend)
+	rawSpend, err = s.repo.UpdateSpend(rawSpend)
 	if err != nil {
 		return Spend{}, err
 	}

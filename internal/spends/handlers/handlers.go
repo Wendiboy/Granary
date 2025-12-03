@@ -3,6 +3,7 @@ package handlers
 import (
 	spendsService "finance/internal/spends/service"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -61,6 +62,7 @@ func (h *spendsHandlers) PostSpend(c echo.Context) error {
 		fmt.Println(err)
 		return c.JSON(400, map[string]string{"error": "invalid JSON"})
 	}
+	log.Println("reqSpend:", reqSpend)
 
 	spend, err := h.service.CreateSpend(reqSpend)
 

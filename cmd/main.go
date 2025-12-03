@@ -9,12 +9,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// подключить postgress
-// Добавить мииграции
-
-// сделать HTMX
-
 func main() {
+
 	database, err := db.InitDB()
 	if err != nil {
 		log.Fatalf("Could not connect to DataBase: %v", err)
@@ -26,6 +22,10 @@ func main() {
 	Handlers := handlers.NewSpendsHandlers(service)
 
 	e := echo.New()
+
+	e.Static("/static", "static")
+	e.File("/", "templates/index.html")
+
 	e.GET("/spends", Handlers.GetAllSpends)
 	e.GET("/spends/:id", Handlers.GetSpend)
 	e.POST("/spends", Handlers.PostSpend)

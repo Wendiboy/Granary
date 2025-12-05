@@ -117,5 +117,5 @@ func (h *spendsHandlers) DeleteSpend(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(201, "ok")
+	return c.NoContent(204)
 }

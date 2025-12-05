@@ -92,6 +92,7 @@ func (h *spendsHandlers) PatchSpend(c echo.Context) error {
 	}
 
 	spend, err := h.service.UpdateSpend(id, reqSpend)
+	log.Println(spend)
 
 	if err != nil {
 		return c.JSON(400, err)

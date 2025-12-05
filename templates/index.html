@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
 
     <link rel="stylesheet" href="/static/styles.css">
 </head>
+
 <body>
 
     <h1>Учёт расходов</h1>
@@ -18,10 +20,7 @@
         <!-- Форма добавления -->
         <div class="form-container">
             <h2>Добавить расход</h2>
-            <form hx-post="/spends"
-                  hx-ext="json-enc"
-                  hx-swap="none"
-                  hx-on::after-request="
+            <form hx-post="/spends" hx-ext="json-enc" hx-swap="none" hx-on::after-request="
                     this.reset();
                     alert('Расход добавлен!');
                     htmx.trigger('#spends-table', 'reload');
@@ -82,144 +81,133 @@
         <!-- Таблица расходов (будет заполняться из JSON) -->
         <div class="table-container">
             <h2>Все расходы</h2>
-            <div id="spends-table"
-                 hx-get="/spends"
-                 hx-trigger="load, reload from:body"
-                 hx-swap="innerHTML"
-                 hx-on::after-swap="renderTable(event.detail.xhr.response)">
+            <div id="spends-table" hx-get="/spends" hx-trigger="load, reload from:body" hx-swap="innerHTML"
+                hx-on::after-swap="renderTable(event.detail.xhr.response)">
                 <p>Загрузка расходов...</p>
             </div>
         </div>
     </div>
 
-    <!-- Здесь происходит вся магия — рендерим таблицу из JSON -->
-<script>
-   function renderTable(jsonText) {
-    let spends;
-    try { spends = JSON.parse(jsonText); }
-    catch (e) {
-        document.getElementById('spends-table').innerHTML = '<p style="color:red">Ошибка загрузки данных</p>';
-        return;
-    }
+    <script>
+        function renderTable(jsonText) {
+            let spends;
+            try { spends = JSON.parse(jsonText); }
+            catch (e) {
+                document.getElementById('spends-table').innerHTML = '<p style="color:red">Ошибка загрузки данных</p>';
+                return;
+            }
 
-    if (!spends.length) {
-        document.getElementById('spends-table').innerHTML = '<p class="empty">Пока нет расходов<br>Добавьте первый!</p>';
-        return;
-    }
+            if (!spends.length) {
+                document.getElementById('spends-table').innerHTML = '<p class="empty">Пока нет расходов<br>Добавьте первый!</p>';
+                return;
+            }
 
-    spends.sort((a, b) => new Date(b.date) - new Date(a.date));
+            spends.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    const currencySymbol = cur => ({RUB:'₽', USD:'$', BTC:'₿', ETH:'Ξ'}[cur] || cur);
-    const formatDate = d => new Date(d).toISOString().split('T')[0];
+            const currencySymbol = cur => ({ RUB: '₽', USD: '$', BTC: '₿', ETH: 'Ξ' }[cur] || cur);
+            const formatDate = d => new Date(d).toISOString().split('T')[0];
 
-    const rows = spends.map(s => {
-        const dateVal = formatDate(s.date);
-
-        return `
+            const rows = spends.map(s => `
             <tr id="row-${s.id}">
-                <!-- Обычный вид строки -->
                 <td data-label="Дата">${new Date(s.date).toLocaleDateString('ru-RU')}</td>
                 <td data-label="Категория">${s.category || '—'}</td>
                 <td data-label="Счёт">${s.account || '—'}</td>
                 <td data-label="Описание" class="note">${s.note || '—'}</td>
                 <td data-label="Тег">${s.labels ? `<span class="tag">${s.labels}</span>` : '—'}</td>
                 <td class="amount">${parseFloat(s.amount).toLocaleString('ru-RU')} ${currencySymbol(s.currency)}</td>
-                <td style="white-space: nowrap; text-align: center;">
-                    <button class="edit-btn" 
-                            onclick="editRow('${s.id}', '${dateVal}', '${s.category || ''}', '${s.account || ''}', '${s.amount}', '${s.currency || 'RUB'}', '${s.labels || ''}', '${(s.note || '').replace(/'/g, "\\'")}')">
-                            Edit
+                <td class="actions" style="white-space: nowrap; text-align: center;">
+                    <button class="edit-btn" title="Редактировать"
+                            onclick="editRow('${s.id}', '${formatDate(s.date)}', '${(s.category || '').replace(/'/g, "\\'")}', '${(s.account || '').replace(/'/g, "\\'")}', '${s.amount}', '${s.currency || 'RUB'}', '${(s.labels || '').replace(/'/g, "\\'")}', '${(s.note || '').replace(/'/g, "&#39;")}')">
+                        Edit
                     </button>
-                    <button class="delete-btn"
+                    <button class="delete-btn" title="Удалить"
                             hx-delete="/spends/${s.id}"
-                            hx-confirm="Точно удалить?"
+                            hx-confirm="Точно удалить этот расход?"
                             hx-target="#row-${s.id}"
                             hx-swap="outerHTML"
                             hx-on::after-request="if(event.detail.successful) htmx.trigger('#spends-table', 'reload')">
-                            Delete
+                        Delete
                     </button>
                 </td>
             </tr>
+        `).join('');
+
+            document.getElementById('spends-table').innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дата</th><th>Категория</th><th>Счёт</th><th>Описание</th><th>Тег</th><th>Сумма</th>
+                        <th style="width:110px; text-align:center;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
         `;
-    }).join('');
 
-    const tableHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Дата</th><th>Категория</th><th>Счёт</th><th>Описание</th><th>Тег</th><th>Сумма</th><th>Действия</th>
-                </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-        </table>
-    `;
+            htmx.process(document.getElementById('spends-table'));
+        }
 
-    const container = document.getElementById('spends-table');
-    container.innerHTML = tableHTML;
-
-    // Обязательно! Оживляем все hx-* атрибуты
-    htmx.process(container);
-}
-
-// ==================================================================
-// Функция превращения строки в форму редактирования
-// ==================================================================
-function editRow(id, date, category, account, amount, currency, labels, note) {
-    const row = document.getElementById(`row-${id}`);
+        function editRow(id, date, category, account, amount, currency, labels, note) {
+    const row = document.getElementById('row-' + id);
 
     row.innerHTML = `
-        <td><input type="date" name="date" value="${date}" required style="width:110px"></td>
-        <td>
-            <select name="category" required>
-                <option value="Еда" ${category==='Еда'?'selected':''}>Еда</option>
-                <option value="Транспорт" ${category==='Транспорт'?'selected':''}>Транспорт</option>
-                <option value="Развлечения" ${category==='Развлечения'?'selected':''}>Развлечения</option>
-                <option value="Жилье" ${category==='Жилье'?'selected':''}>Жилье</option>
-                <option value="Здоровье" ${category==='Здоровье'?'selected':''}>Здоровье</option>
-                <option value="Образование" ${category==='Образование'?'selected':''}>Образование</option>
-                <option value="Другое" ${category==='Другое'?'selected':''}>Другое</option>
-            </select>
-        </td>
-        <td>
-            <select name="account">
-                <option value="t-bank" ${account==='t-bank'?'selected':''}>T-bank</option>
-                <option value="sber" ${account==='sber'?'selected':''}>SBER</option>
-                <option value="alfa_visa" ${account==='alfa_visa'?'selected':''}>Alfa Visa</option>
-                <option value="alfa_mir" ${account==='alfa_mir'?'selected':''}>Alfa MIR</option>
-                <option value="t-bank_invest" ${account==='t-bank_invest'?'selected':''}>T-Bank Invest</option>
-                <option value="exodus-btc" ${account==='exodus-btc'?'selected':''}>Crypto (Exodus)</option>
-            </select>
-        </td>
-        <td><input type="text" name="note" value="${note}" placeholder="Описание"></td>
-        <td><input type="text" name="labels" value="${labels}" placeholder="тег" style="width:80px"></td>
-        <td>
-            <input type="number" name="amount" step="0.01" value="${amount}" required style="width:90px">
-            <select name="currency" style="width:65px">
-                <option value="RUB" ${currency==='RUB'?'selected':''}>RUB</option>
-                <option value="USD" ${currency==='USD'?'selected':''}>USD</option>
-                <option value="BTC" ${currency==='BTC'?'selected':''}>BTC</option>
-                <option value="ETH" ${currency==='ETH'?'selected':''}>ETH</option>
-            </select>
-        </td>
-        <td style="white-space: nowrap; text-align:center;">
-            <button style="background:#28a745;color:white;border:none;padding:8px 12px;border-radius:4px;margin:2px;"
-                    hx-patch="/spends/${id}"
-                    hx-ext="json-enc"
-                    hx-target="#spends-table"
-                    hx-swap="innerHTML"
-                    hx-include="closest tr">
-                Сохранить
-            </button>
-            <button style="background:#6c757d;color:white;border:none;padding:8px 12px;border-radius:4px;margin:2px;"
-                    onclick="htmx.trigger('#spends-table', 'reload')">
-                Отмена
-            </button>
-        </td>
-    `;
+    <td colspan="7" style="padding:8px; background:#f9f9f9;" >
+        <form hx-patch="/spends/${id}"
+              hx-ext="json-enc"
+              hx-target="#spends-table"
+              hx-swap="innerHTML"
+              style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; align-items:end;">
+            
+            <input type="date" name="date" value="${date}" required>
 
-    // Оживляем новые hx-атрибуты в только что созданной форме
+            <select name="category" required>
+                <option value="Еда"          ${category === 'Еда' ? 'selected' : ''}>Еда</option>
+                <option value="Транспорт"    ${category === 'Транспорт' ? 'selected' : ''}>Транспорт</option>
+                <option value="Развлечения"  ${category === 'Развлечения' ? 'selected' : ''}>Развлечения</option>
+                <option value="Жилье"        ${category === 'Жилье' ? 'selected' : ''}>Жилье</option>
+                <option value="Здоровье"     ${category === 'Здоровье' ? 'selected' : ''}>Здоровье</option>
+                <option value="Образование"  ${category === 'Образование' ? 'selected' : ''}>Образование</option>
+                <option value="Другое"       ${category === 'Другое' ? 'selected' : ''}>Другое</option>
+            </select>
+
+            <select name="account">
+                <option value="t-bank"        ${account === 't-bank' ? 'selected' : ''}>T-bank</option>
+                <option value="sber"          ${account === 'sber' ? 'selected' : ''}>SBER</option>
+                <option value="alfa_visa"     ${account === 'alfa_visa' ? 'selected' : ''}>Alfa Visa</option>
+                <option value="alfa_mir"      ${account === 'alfa_mir' ? 'selected' : ''}>Alfa MIR</option>
+                <option value="t-bank_invest" ${account === 't-bank_invest' ? 'selected' : ''}>T-Bank Invest</option>
+                <option value="exodus-btc"    ${account === 'exodus-btc' ? 'selected' : ''}>Crypto</option>
+            </select>
+
+            <input type="text" name="note" value="${note}" placeholder="Описание">
+            <input type="text" name="labels" value="${labels}" placeholder="Тег">
+            <input type="number" name="amount" step="0.01" value="${amount}" required>
+
+            <select name="currency">
+                <option value="RUB" ${currency === 'RUB' ? 'selected' : ''}>₽ RUB</option>
+                <option value="USD" ${currency === 'USD' ? 'selected' : ''}>$ USD</option>
+                <option value="BTC" ${currency === 'BTC' ? 'selected' : ''}>₿ BTC</option>
+                <option value="ETH" ${currency === 'ETH' ? 'selected' : ''}>Ξ ETH</option>
+            </select>
+
+            <div  style="grid-column:1/-1; display:flex; gap:8px; justify-content:flex-end;">
+                <button type="submit" style="background:#28a745; color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer;">
+                    Сохранить
+                </button>
+
+                <button type="button"
+                        onclick="htmx.trigger('#spends-table','reload')"
+                        style="background:#6c757d; color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer;">
+                    Отмена
+                </button>
+            </div>
+        </form>
+    </td>
+`;
+
     htmx.process(row);
 }
-</script>
-
+    </script>
 </body>
+
 </html>

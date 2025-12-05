@@ -1,0 +1,35 @@
+package SpendsService
+
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type Account struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Bank      string `json:"bank"`
+	Icon      string `json:"icon"`
+	Color     string `json:"color"`
+	Balance   string `json:"balance"`
+	Currency  string `json:"currency"`
+	Type      string `json:"type"`
+	IntiValue string `json:"inti_value"`
+	Date      string `json:"date"`
+	Note      string `json:"note"`
+}
+
+type RawAccount struct {
+	Id        uuid.UUID
+	Account   string
+	Category  string
+	Amount    float64
+	Currency  string
+	Labels    string
+	Note      string
+	Date      string
+	CreatedAt time.Time  `gorm:"column:created_at"`
+	UpdatedAt time.Time  `gorm:"column:updated_at"`
+	DeletedAt *time.Time `gorm:"column:deleted_at"`
+}

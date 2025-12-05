@@ -56,7 +56,7 @@ func (h *spendsHandlers) GetAllSpends(c echo.Context) error {
 }
 
 func (h *spendsHandlers) PostSpend(c echo.Context) error {
-	reqSpend := spendsService.Spend{}
+	reqSpend := spendsService.SpendRequestDTO{}
 
 	if err := c.Bind(&reqSpend); err != nil {
 		fmt.Println(err)
@@ -74,24 +74,17 @@ func (h *spendsHandlers) PostSpend(c echo.Context) error {
 }
 
 func (h *spendsHandlers) PatchSpend(c echo.Context) error {
-	idParam := c.Param("id")
+	id := c.Param("id")
 
-	id, err := uuid.Parse(idParam)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "invalid UUID",
-		})
-	}
-
-	reqSpend := spendsService.Spend{}
+	reqSpend := spendsService.SpendRequestDTO{}
+	reqSpend.Id = id
 
 	if err := c.Bind(&reqSpend); err != nil {
 		fmt.Println(err)
 		return c.JSON(400, map[string]string{"error": "invalid JSON"})
 	}
 
-	spend, err := h.service.UpdateSpend(id, reqSpend)
+	spend, err := h.service.UpdateSpend(reqSpend)
 	log.Println(spend)
 
 	if err != nil {

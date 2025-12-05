@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS raw_spends;
+DROP TABLE spends;

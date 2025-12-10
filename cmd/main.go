@@ -1,6 +1,8 @@
 package main
 
 import (
+	accountHandlers "finance/internal/accounts/handlers"
+	accountService "finance/internal/accounts/service"
 	db "finance/internal/db"
 	handlers "finance/internal/spends/handlers"
 	spendsService "finance/internal/spends/service"
@@ -20,6 +22,9 @@ func main() {
 	service := spendsService.NewSpendsService(repository)
 
 	Handlers := handlers.NewSpendsHandlers(service)
+	accRepo := accountService.NewAccountsRepository(database)
+	accService := accountService.NewAccountsService(accRepo)
+	accHandlers := accountHandlers.NewAccountsHandlers(accService)
 
 	e := echo.New()
 
@@ -31,6 +36,13 @@ func main() {
 	e.POST("/spends", Handlers.PostSpend)
 	e.PATCH("/spends/:id", Handlers.PatchSpend)
 	e.DELETE("/spends/:id", Handlers.DeleteSpend)
+
+	g := e.Group("api/accounts")
+	g.GET("", accHandlers.GetAll)
+	g.GET("/:id", accHandlers.GetOne)
+	g.POST("", accHandlers.Create)
+	g.PATCH("/:id", accHandlers.Update)
+	g.DELETE("/:id", accHandlers.Delete)
 
 	e.Logger.Fatal(e.Start(":8080"))
 

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои расходы</title>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+
+    <h1>Учёт расходов</h1>
+
+    <div class="container">
+
+        <!-- Форма добавления -->
+        <div class="form-container">
+            <h2>Добавить расход</h2>
+            <form hx-post="/spends" hx-ext="json-enc" hx-swap="none" hx-on::after-request="
+                    this.reset();
+                    alert('Расход добавлен!');
+                    htmx.trigger('#spends-table', 'reload');
+                  ">
+                <div class="grid">
+                    <div><label>Тип</label>
+                        <select name="type" required>
+                            <option value="expence">Расход</option>
+                            <option value="income">Доход</option>
+                            <option value="transfer">Перевод</option>
+                        </select>
+                    </div>
+                    <div><label>Счёт</label>
+                        <select name="account_id" required>
+                            <option value="" disabled selected>Выберите счёт</option>
+                            <option value="87f5012e-6a4d-4d55-8fa4-7705598fb85c">T-bank</option>
+                            <option value="87f5012e-6a4d-4d55-8fa4-7705598fb85c">SBER</option>
+                            <option value="87f5012e-6a4d-4d55-8fa4-7705598fb85c">Alfa Visa</option>
+                            <option value="87f5012e-6a4d-4d55-8fa4-7705598fb85c">Alfa MIR</option>
+                            <option value="87f5012e-6a4d-4d55-8fa4-7705598fb85c">T-Bank Invest</option>
+                        </select>
+                    </div>
+                    <div><label>На счёт</label>
+                        <select name="account_to_id">
+                            <option value="" disabled selected>Выберите счёт</option>
+                            <option value="t-bank">T-bank</option>
+                            <option value="sber">SBER</option>
+                            <option value="alfa_visa">Alfa Visa</option>
+                            <option value="alfa_mir">Alfa MIR</option>
+                            <option value="t-bank_invest">T-Bank Invest</option>
+                            <option value="exodus-btc">Crypto (Exodus)</option>
+                        </select>
+                    </div>
+                    <div><label>Область</label>
+                        <select name="area_id">
+                            <option value="" disabled selected>Выберите категорию</option>
+                            <option value="Еда">Еда</option>
+                            <option value="Транспорт">Транспорт</option>
+                            <option value="Развлечения">Развлечения</option>
+                            <option value="Жилье">Жилье</option>
+                            <option value="Здоровье">Здоровье</option>
+                            <option value="Образование">Образование</option>
+                            <option value="Другое">Другое</option>
+                        </select>
+                    </div>
+                    <div><label>Категория</label>
+                        <select name="category_id" required>
+                            <option value="" disabled selected>Выберите категорию</option>
+                            <option value="87f5012e-6a4d-4d55-8fa4-7705598fb85c">Еда</option>
+                            <option value="87f5012e-6a4d-4d55-8fa4-7705598fb85c">Транспорт</option>
+                            <option value="87f5012e-6a4d-4d55-8fa4-7705598fb85c">Развлечения</option>
+                        </select>
+                    </div>
+                    <div><label>Дата</label><input type="date" name="date" required></div>
+                    <div><label>Сумма</label><input type="number" name="amount" step="0.01" min="0" required></div>
+                    <div><label>Валюта</label>
+                        <select name="currency" required>
+                            <option value="" disabled selected>Валюта</option>
+                            <option value="RUB">RUB ₽</option>
+                            <option value="USD">USD $</option>
+                            <option value="BTC">BTC ₿</option>
+                            <option value="ETH">ETH Ξ</option>
+                        </select>
+                    </div>
+                    <div><label>Тег</label>
+                        <select name="labels">
+                            <option value="">Без тега</option>
+                            <option value="spar">SPAR</option>
+                            <option value="шаурма">Шаурма</option>
+                            <option value="кофе">Кофе</option>
+                            <option value="пятерочка">Пятёрочка</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label>Описание</label>
+                        <input type="text" name="note" placeholder="Необязательно">
+                    </div>
+                </div>
+                <button type="submit">Добавить расход</button>
+            </form>
+        </div>
+
+        <!-- Таблица расходов (будет заполняться из JSON) -->
+        <div class="table-container">
+            <h2>Все расходы</h2>
+            <div id="spends-table" hx-get="/spends" hx-trigger="load, reload from:body" hx-swap="innerHTML"
+                hx-on::after-swap="renderTable(event.detail.xhr.response)">
+                <p>Загрузка расходов...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/spends-table.js"></script>
+</body>
+
+</html>

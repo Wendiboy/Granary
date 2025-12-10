@@ -14,17 +14,22 @@
 
             spends.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            const currencySymbol = cur => ({ RUB: '₽', USD: '$', BTC: '₿', ETH: 'Ξ' }[cur] || cur);
+            const currencySymbol = cur => ({ RUB: '₽', USD: '$',EUR: '€', BTC: '₿', ETH: 'Ξ' }[cur] || cur);
             const formatDate = d => new Date(d).toISOString().split('T')[0];
 
             const rows = spends.map(s => `
             <tr id="row-${s.id}">
                 <td data-label="Дата">${new Date(s.date).toLocaleDateString('ru-RU')}</td>
-                <td data-label="Категория">${s.category || '—'}</td>
-                <td data-label="Счёт">${s.account || '—'}</td>
-                <td data-label="Описание" class="note">${s.note || '—'}</td>
-                <td data-label="Тег">${s.labels ? `<span class="tag">${s.labels}</span>` : '—'}</td>
+                <td data-label="Тип">${s.type || '—'}</td>
+                <td data-label="Область">${s.area || '—'}</td>
+                <td data-label="Категория">${s.category_id || '—'}</td>
+                <td data-label="Счёт">${s.account_id || '—'}</td>
+                <td data-label="Перевод">${s.account || '—'}</td>
                 <td class="amount">${parseFloat(s.amount).toLocaleString('ru-RU')} ${currencySymbol(s.currency)}</td>
+                <td data-label="Валюта">${currencySymbol(s.currency) || s.currency || '—' }</td>
+                <td data-label="Описание" class="note">${s.note || '—'}</td>
+                <td data-label="Тэги">${s.labels ? `<span class="tag">${s.labels}</span>` : '—'}</td>
+                
                 <td class="actions" style="white-space: nowrap; text-align: center;">
                     <button class="edit-btn" title="Редактировать"
                             onclick="editRow('${s.id}', '${formatDate(s.date)}', '${(s.category || '').replace(/'/g, "\\'")}', '${(s.account || '').replace(/'/g, "\\'")}', '${s.amount}', '${s.currency || 'RUB'}', '${(s.labels || '').replace(/'/g, "\\'")}', '${(s.note || '').replace(/'/g, "&#39;")}')">
@@ -46,7 +51,16 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Дата</th><th>Категория</th><th>Счёт</th><th>Описание</th><th>Тег</th><th>Сумма</th>
+                        <th>Дата</th>
+                        <th>Тип</th>
+                        <th>Область</th>
+                        <th>Категория</th>
+                        <th>Счёт</th>
+                        <th>Перевод</th>
+                        <th>Сумма</th>
+                        <th>Валюта</th>
+                        <th>Описание</th>
+                        <th>Тэг</th>                        
                         <th style="width:110px; text-align:center;">Действия</th>
                     </tr>
                 </thead>

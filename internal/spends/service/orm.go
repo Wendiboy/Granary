@@ -12,16 +12,19 @@ import (
 )
 
 type SpendRequestDTO struct {
-	Id          string `json:"id"`
+	Id                    string `json:"id"`
+	LinkedTransferSpendID string `json:"linked_spend_id"`
+
+	Date        string `json:"date"`
 	Type        string `json:"type"`
+	AreaID      string `json:"area_id"`
+	CategoryID  string `json:"category_id"`
 	AccountID   string `json:"account_id"`
 	AccountToID string `json:"account_to_id,omitempty"`
-	CategoryID  string `json:"category_id"`
 	Amount      string `json:"amount"`
 	Currency    string `json:"currency"`
+	Note        string `json:"note,omitempty"`
 	Labels      string `json:"labels"`
-	Note        string `json:"note"`
-	Date        string `json:"date"`
 }
 
 type Spend struct {
@@ -29,6 +32,7 @@ type Spend struct {
 	Type        string
 	AccountID   uuid.UUID
 	AccountToID *uuid.UUID
+	AreaID      uuid.UUID
 	CategoryID  uuid.UUID
 	Amount      float64
 	Currency    string
@@ -36,7 +40,8 @@ type Spend struct {
 	Note        string
 	Date        time.Time
 
-	IsPending bool
+	IsPending             bool
+	LinkedTransferSpendID *uuid.UUID `gorm:"type:uuid"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -44,15 +49,19 @@ type Spend struct {
 }
 
 type SpendResponseDTO struct {
-	ID         string `json:"id"`
-	AccountID  string `json:"account_id"`
-	CategoryID string `json:"category_id"`
-	Type       string `json:"type"`
-	Amount     string `json:"amount"`
-	Currency   string `json:"currency"`
-	Note       string `json:"note"`
-	Labels     string `json:"labels"`
-	Date       string `json:"date"`
+	ID                    string `json:"id"`
+	LinkedTransferSpendID string `json:"linked_spend_id"`
+
+	Date        string `json:"date"`
+	Type        string `json:"type"`
+	AreaID      string `json:"area_id"`
+	CategoryID  string `json:"category_id"`
+	AccountID   string `json:"account_id"`
+	AccountToID string `json:"account_to_id,omitempty"`
+	Amount      string `json:"amount"`
+	Currency    string `json:"currency"`
+	Note        string `json:"note"`
+	Labels      string `json:"labels"`
 
 	CreatedAt string `json:"created_at"`
 }

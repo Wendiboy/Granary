@@ -8,11 +8,19 @@ https://grok.com/c/7de15ecd-beea-4a62-8ddd-40d122599f7e?rid=64ea88b3-b477-4ce2-9
 = переписать UI табицу расходов
 = Добваить LINK Transfer для SpendsService
 = Переделать HTMX под новый SPENDS
-
-- Добваить сущность Accounts
-- Добавить get запрос /accounts в addSpendsd menuц
+= Добваить сущность Accounts
+= Составить список сущностей с их свойствами 
+= Выбрать 20 процентов для реализации на 1 этапе
 
 ---
-- Добваить сущность Category
+
+
+- Сделать UI-HTMX-CRUD для Accounts
+- Создать сущность category
+
+
+---
+
+- Добавить get запрос /accounts в addSpendsd menuц
 - Добваить сущность Labels 
 

@@ -12,7 +12,6 @@ import (
 )
 
 func main() {
-
 	database, err := db.InitDB()
 	if err != nil {
 		log.Fatalf("Could not connect to DataBase: %v", err)

@@ -18,8 +18,7 @@
             gap: 30px;
         }
 
-        .form-add-spends,
-        .form-add-account,
+        .form-container,
         .table-container {
             background: #fff;
             padding: 25px;

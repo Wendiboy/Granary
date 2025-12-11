@@ -1,0 +1,99 @@
+<body>
+    <!-- Форма добавления ACCOUNT-->
+    <div id="form-add-account-container" class="form-add-account">
+        <h2>Добавить счёт</h2>
+        <form hx-post="api/accounts" hx-ext="json-enc" hx-swap="none" hx-on::after-request="
+              this.reset();
+              htmx.trigger('#account-table', 'reload');
+          ">
+            <div class="grid">
+        <div style="grid-column: 1 / -1;">
+            <label>Название счёта *</label>
+            <input type="text" name="name" required value="test">
+        </div>
+
+        <div>
+            <label>Банк</label>
+            <input type="text" name="bank_name" value="test">
+        </div>
+
+        <div>
+            <label>Иконка</label>
+            <input type="text" name="icon" value="test">
+        </div>
+
+        <div>
+            <label>Цвет</label>
+            <input type="color" name="color" value="#3b82f6">
+        </div>
+
+        <div>
+            <label>Валюта *</label>
+            <select name="currency" required>
+                <option value="RUB">RUB</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="BTC">BTC</option>
+                <option value="ETH">ETH</option>
+            </select>
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+            <label>Тип счёта *</label>
+            <select name="type" required>
+                <option value="cash">Наличные</option>
+                <option value="debit_card">Дебетовая карта</option>
+                <option value="credit_card">Кредитная карта</option>
+                <option value="savings">Накопительный</option>
+                <option value="investment">Инвестиционный</option>
+                <option value="deposit">Депозит</option>
+                <option value="loan">Кредит</option>
+                <option value="crypto">Криптовалюта</option>
+                <option value="other">Другое</option>
+            </select>
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+            <label>Начальный баланс *</label>
+            <input type="number" name="initial_balance" step="0.01" value="0" required>
+        </div>
+
+        <div>
+            <label>Дата открытия</label>
+            <input type="date" name="opened_at" value="2025-12-01">
+        </div>
+
+        <div>
+            <label>Дата закрытия</label>
+            <input type="date" name="closed_at">
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+            <label>Примечание</label>
+            <textarea name="note" rows="3"></textarea>
+        </div>
+
+        <div>
+            <label>Порядок сортировки</label>
+            <input type="number" name="sort_order" min="0" value="0">
+        </div>
+
+        <div>
+            <label style="display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" name="is_active" value="true" hx-boolean>
+                Активный
+            </label>
+
+            <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+                <input type="checkbox" name="is_hidden" value="true">
+                Скрытый
+            </label>
+        </div>
+    </div>
+
+    <button type="submit">Добавить счёт</button>
+        </form>
+    </div>
+
+
+</body>

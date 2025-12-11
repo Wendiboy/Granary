@@ -17,7 +17,7 @@ type SpendRequestDTO struct {
 
 	Date        string `json:"date"`
 	Type        string `json:"type"`
-	AreaID      string `json:"area_id"`
+	AreaID      string `json:"area_id,omitempty"`
 	CategoryID  string `json:"category_id"`
 	AccountID   string `json:"account_id"`
 	AccountToID string `json:"account_to_id,omitempty"`
@@ -32,16 +32,16 @@ type Spend struct {
 	Type        string
 	AccountID   uuid.UUID
 	AccountToID *uuid.UUID
-	AreaID      uuid.UUID
-	CategoryID  uuid.UUID
-	Amount      float64
-	Currency    string
-	Labels      pq.StringArray `gorm:"type:text[]"`
-	Note        string
-	Date        time.Time
+	// AreaID      uuid.UUID
+	CategoryID uuid.UUID
+	Amount     float64
+	Currency   string
+	Labels     pq.StringArray `gorm:"type:text[]"`
+	Note       string
+	Date       time.Time
 
-	IsPending             bool
-	LinkedTransferSpendID *uuid.UUID `gorm:"type:uuid"`
+	IsPending bool
+	// LinkedTransferSpendID *uuid.UUID `gorm:"type:uuid"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

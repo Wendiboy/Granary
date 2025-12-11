@@ -14,7 +14,7 @@ https://grok.com/c/7de15ecd-beea-4a62-8ddd-40d122599f7e?rid=64ea88b3-b477-4ce2-9
 
 ---
 
-
+- Сделать UI-рыбу для CRUD
 - Сделать UI-HTMX-CRUD для Accounts
 - Создать сущность category
 
